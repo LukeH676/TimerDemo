@@ -5,14 +5,74 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
+    SeekBar timeSeekbar;
+    TextView timerText;
+
+    public void updateTimer(int secondsLeft){
+        int minutes = (int) secondsLeft / 60;
+        int seconds =  secondsLeft - minutes * 60;
+
+        String secondString = Integer.toString(seconds);
+
+        if (secondString.equals("0")){
+            secondString = "00";
+        }
+        timerText.setText(Integer.toString(minutes)+ ":"+secondString);
+
+    }
+
+    public void controlTimer(View view){
+        Log.i("button Pressed","Pressed");
+        new CountDownTimer(timeSeekbar.getProgress()* 1000,1000){
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+             updateTimer((int) millisUntilFinished / 1000);
+            }
+
+            @Override
+            public void onFinish() {
+            Log.i("finished","done");
+            }
+        }.start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CountDownTimer(10000,1000){
+
+
+        timeSeekbar = (SeekBar) findViewById(R.id.timerBar);
+        timerText = (TextView) findViewById(R.id.time);
+        timeSeekbar.setMax(600);
+        timeSeekbar.setProgress(30);
+        timeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            updateTimer(progress);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+       /* new CountDownTimer(10000,1000){
             public void onTick(long milTillDone){
 
                 //Happens when countdown counts down every 1 second in this case
@@ -24,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("DONE","Countdown finished");
 
             }
-        }.start();
+        }.start();*/
 
        /* final Handler handler = new Handler();
         // allows chunks of code to be run in a delayed way - every X seconds
